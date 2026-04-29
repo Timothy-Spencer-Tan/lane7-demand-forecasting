@@ -1,37 +1,90 @@
 # Lane 7 Demand Forecasting System
 
-End-to-end demand forecasting pipeline built for a B2B apparel company to improve inventory planning, purchasing decisions, production forecasting, and SKU allocation.
+End-to-end demand forecasting platform built for a B2B apparel company to improve:
+
+- Inventory planning
+- Production planning
+- Purchasing decisions
+- SKU demand visibility
+- Forecast scalability
 
 ---
 
-## Business Problem
+# Business Problem
 
 Lane 7 sells apparel products across:
 
-- Multiple styles
-- Multiple colors
-- Multiple sizes
-- Wholesale-driven demand cycles
+- Styles
+- Colors
+- Sizes
+- Product categories
 
-The biggest challenge was forecasting demand at the SKU level, where demand was often sparse and inconsistent.
-
-### Initial Problem:
-Direct SKU forecasting produced weak results because:
-
-- Many SKUs had low historical volume
-- Demand was highly fragmented across size/color combinations
-- Certain products had intermittent ordering behavior
+The company needed a way to forecast future demand before orders arrive.
 
 ---
 
-## Solution Architecture
+## Core Challenge
 
-Instead of forecasting directly at the SKU level:
+Direct SKU forecasting performed poorly because:
 
-### Step 1: Forecast at StyleCode Level
-This created more stable demand signals.
+- Many SKU combinations had sparse historical demand
+- Certain products had intermittent purchasing behavior
+- Size/color combinations created fragmented demand patterns
 
-### Step 2: Segment Products Based on Demand Behavior
+Forecasting directly at the SKU level created unstable predictions.
+
+---
+
+# Solution Architecture
+
+## 1) ETL Pipeline
+
+Raw data was pulled from Lane 7's operational database:
+
+- Orders
+- OrderLine
+- Item
+- Size
+- Color
+
+The ETL pipeline cleans, joins, and transforms these datasets into forecasting-ready tables.
+
+### ETL Outputs
+
+### `dim_product`
+Contains product-level metadata including:
+
+- Style
+- Color
+- Size
+- Product hierarchy details
+
+### `gold_fact_monthly_demand.csv`
+
+Primary training dataset used by the forecasting models.
+
+Contains:
+
+- Monthly product demand
+- Historical sales volume
+- Product relationships
+- Time-based forecasting inputs
+
+---
+
+# Forecasting Pipeline
+
+After ETL creates clean datasets, the forecasting pipeline:
+
+- Segments products by demand behavior
+- Engineers forecasting features
+- Trains multiple forecasting models
+- Selects best performing models
+- Generates production forecasts
+
+---
+
+## Demand Segmentation
 
 Products were segmented into:
 
@@ -39,56 +92,93 @@ Products were segmented into:
 - Intermittent demand
 - Low-volume demand
 
+Each segment required different forecasting strategies.
+
 ---
 
-## Modeling Approach
+# Models Used
 
-Different forecasting models were tested depending on demand behavior:
+Depending on segment and forecast horizon:
 
 - XGBoost
 - LightGBM
 - Moving Average Models
 - Seasonal Baselines
-- Allocation Optimization Models
-
-The pipeline dynamically selected the best-performing model based on product segment and forecast horizon.
 
 ---
 
-## Version Evolution
+# SKU Allocation Layer
 
-### V1
-Initial production forecasting pipeline
+Instead of forecasting directly at SKU level:
 
-### V2
-Improved forecasting stability and feature engineering
+1. Forecast demand at StyleCode level  
+2. Allocate forecast down to SKU level  
 
-### V3
+This significantly improved forecast stability.
+
+---
+
+# Version Evolution
+
+## V1
+
+Initial forecasting baseline
+
+---
+
+## V2
+
+Improved forecasting stability
+
+Added:
+
+- Better calibration
+- Performance diagnostics
+- Improved feature engineering
+
+---
+
+## V3
+
 Final production winner
 
-### V8
-Comparison framework used to validate model performance and deployment readiness
+Added:
+
+- Global bias control
+- Improved production forecasting logic
 
 ---
 
-## Project Structure
+## Comparison Framework 
+
+- Cycling through the weights to find a better model than the current best
+- Final validation framework used to compare all forecasting versions before deployment.
+
+---
+
+# Repository Structure
 
 ```bash
-forecasting_pipeline/
+lane7-demand-forecasting/
 │
-├── data_prep.py
-├── features.py
-├── segmentation.py
-├── models.py
-├── evaluation.py
-├── allocation.py
-├── holdout_v6.py
-├── production_outputs_v76.py
+├── etl_pipeline/
+│   ├── v1/
+│   └── v2/
+│
+├── forecasting_pipeline/
+│   ├── v1/
+│   ├── v2/
+│   ├── v3/
+│   └── comparison/
+│
+├── Notebooks/
+│
+└── README.md
 ```
 
 ---
 
-## Tech Stack
+# Tech Stack
 
 - Python
 - Pandas
@@ -99,19 +189,19 @@ forecasting_pipeline/
 
 ---
 
-## Business Impact
+# Business Value
 
-This project helps businesses improve:
+This system helps Lane 7 improve:
 
 - Inventory planning
-- Purchasing decisions
-- Production planning
+- Production forecasting
+- Purchasing strategy
 - Demand visibility
-- Forecast scalability
+- Operational scalability
 
 ---
 
-## Future Improvements
+# Future Improvements
 
 - Size curve forecasting
 - Hierarchical reconciliation
@@ -120,12 +210,13 @@ This project helps businesses improve:
 
 ---
 
-## Why This Project Matters
+# Why This Project Matters
 
 This project demonstrates:
-- Forecasting  
-- Machine Learning  
-- Feature Engineering  
-- Data Engineering  
-- Business Strategy  
-- Production-Oriented Thinking
+- Data Engineering
+- ETL Development
+- Forecasting
+- Machine Learning
+- Feature Engineering
+- Business Strategy
+- Production-Oriented Data Science
