@@ -57,13 +57,13 @@ The pipeline dynamically selected the best-performing model based on product seg
 
 ## Version Evolution
 
-### V1 (v7.4)
+### V1
 Initial production forecasting pipeline
 
-### V2 (v7.5)
+### V2
 Improved forecasting stability and feature engineering
 
-### V3 (v7.6)
+### V3
 Final production winner
 
 ### V8
